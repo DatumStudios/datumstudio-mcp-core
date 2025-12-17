@@ -1,0 +1,17 @@
+{
+    "name": "DatumStudio.Mcp.Core.Editor",
+    "rootNamespace": "DatumStudio.Mcp.Core.Editor",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+

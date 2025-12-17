@@ -1,0 +1,21 @@
+{
+    "name": "DatumStudio.Mcp.Core.Tests.Editor",
+    "rootNamespace": "DatumStudio.Mcp.Core.Tests.Editor",
+    "references": [
+        "DatumStudio.Mcp.Core.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
+
