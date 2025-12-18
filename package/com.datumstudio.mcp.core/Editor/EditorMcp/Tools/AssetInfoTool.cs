@@ -76,6 +76,19 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
                 }
             }
 
+            // Guard: Only process assets in Assets/ folder (never touch Packages/)
+            if (string.IsNullOrEmpty(assetPath) || !assetPath.StartsWith("Assets/"))
+            {
+                return new ToolInvokeResponse
+                {
+                    Tool = Definition.Id,
+                    Output = new Dictionary<string, object>
+                    {
+                        { "error", $"Asset path must be in Assets/ folder. Package assets are not supported." }
+                    }
+                };
+            }
+
             // Validate path exists
             var pathGuid = AssetDatabase.AssetPathToGUID(assetPath);
             if (string.IsNullOrEmpty(pathGuid))

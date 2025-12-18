@@ -70,7 +70,8 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
                 foreach (var guid in allSceneGuids)
                 {
                     var path = AssetDatabase.GUIDToAssetPath(guid);
-                    if (string.IsNullOrEmpty(path))
+                    // Guard: Only process assets in Assets/ folder (never touch Packages/)
+                    if (string.IsNullOrEmpty(path) || !path.StartsWith("Assets/"))
                         continue;
 
                     // Skip if already in build settings

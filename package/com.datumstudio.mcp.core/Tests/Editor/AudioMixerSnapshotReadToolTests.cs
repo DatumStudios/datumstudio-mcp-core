@@ -28,8 +28,12 @@ namespace DatumStudio.Mcp.Core.Tests.Editor
             if (mixerGuids != null && mixerGuids.Length > 0)
             {
                 _testMixerPath = AssetDatabase.GUIDToAssetPath(mixerGuids[0]);
-                _testMixerGuid = mixerGuids[0];
-                _testMixer = AssetDatabase.LoadAssetAtPath<AudioMixer>(_testMixerPath);
+                // Guard: Only use assets in Assets/ folder (never touch Packages/)
+                if (!string.IsNullOrEmpty(_testMixerPath) && _testMixerPath.StartsWith("Assets/"))
+                {
+                    _testMixerGuid = mixerGuids[0];
+                    _testMixer = AssetDatabase.LoadAssetAtPath<AudioMixer>(_testMixerPath);
+                }
             }
         }
 

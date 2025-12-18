@@ -77,7 +77,24 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
                 foreach (var asset in sortedAssets)
                 {
                     var assetPath = AssetDatabase.GetAssetPath(asset);
-                    var assetGuid = string.IsNullOrEmpty(assetPath) ? null : AssetDatabase.AssetPathToGUID(assetPath);
+                    // Guard: Only process assets in Assets/ folder (never touch Packages/)
+                    // Skip package assets to avoid "no meta file" errors
+                    if (string.IsNullOrEmpty(assetPath) || !assetPath.StartsWith("Assets/"))
+                    {
+                        // Include asset info but mark as package asset
+                        selectedObjects.Add(new Dictionary<string, object>
+                        {
+                            { "name", asset.name },
+                            { "type", asset.GetType().Name },
+                            { "instanceId", asset.GetInstanceID() },
+                            { "path", assetPath ?? "" },
+                            { "guid", "" },
+                            { "note", "Package asset (not in Assets/ folder)" }
+                        });
+                        continue;
+                    }
+
+                    var assetGuid = AssetDatabase.AssetPathToGUID(assetPath);
 
                     selectedObjects.Add(new Dictionary<string, object>
                     {

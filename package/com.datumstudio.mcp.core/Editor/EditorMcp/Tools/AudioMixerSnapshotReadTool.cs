@@ -96,6 +96,19 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
                 }
             }
 
+            // Guard: Only process assets in Assets/ folder (never touch Packages/)
+            if (string.IsNullOrEmpty(mixerPath) || !mixerPath.StartsWith("Assets/"))
+            {
+                return new ToolInvokeResponse
+                {
+                    Tool = Definition.Id,
+                    Output = new Dictionary<string, object>
+                    {
+                        { "error", $"AudioMixer path must be in Assets/ folder. Package assets are not supported." }
+                    }
+                };
+            }
+
             // Load mixer
             AudioMixer mixer = null;
             try

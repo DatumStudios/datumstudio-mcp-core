@@ -113,7 +113,8 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
                 }
 
                 var path = AssetDatabase.GUIDToAssetPath(guid);
-                if (string.IsNullOrEmpty(path))
+                // Guard: Only process assets in Assets/ folder (never touch Packages/)
+                if (string.IsNullOrEmpty(path) || !path.StartsWith("Assets/"))
                     continue;
 
                 try
@@ -159,7 +160,8 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
                 }
 
                 var path = AssetDatabase.GUIDToAssetPath(guid);
-                if (string.IsNullOrEmpty(path))
+                // Guard: Only process assets in Assets/ folder (never touch Packages/)
+                if (string.IsNullOrEmpty(path) || !path.StartsWith("Assets/"))
                     continue;
 
                 try

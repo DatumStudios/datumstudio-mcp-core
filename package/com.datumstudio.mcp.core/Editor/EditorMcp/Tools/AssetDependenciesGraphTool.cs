@@ -106,6 +106,19 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
                 }
             }
 
+            // Guard: Only process assets in Assets/ folder (never touch Packages/)
+            if (string.IsNullOrEmpty(assetPath) || !assetPath.StartsWith("Assets/"))
+            {
+                return new ToolInvokeResponse
+                {
+                    Tool = Definition.Id,
+                    Output = new Dictionary<string, object>
+                    {
+                        { "error", $"Asset path must be in Assets/ folder. Package assets are not supported." }
+                    }
+                };
+            }
+
             // Validate path exists
             var pathGuid = AssetDatabase.AssetPathToGUID(assetPath);
             if (string.IsNullOrEmpty(pathGuid))
@@ -173,8 +186,8 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
 
                     foreach (var dep in sortedDeps)
                     {
-                        // Skip self and meta files
-                        if (dep == currentPath || dep.EndsWith(".meta"))
+                        // Skip self, meta files, and package paths (never touch Packages/)
+                        if (dep == currentPath || dep.EndsWith(".meta") || !dep.StartsWith("Assets/"))
                             continue;
 
                         var depType = AssetDatabase.GetMainAssetTypeAtPath(dep);
@@ -212,7 +225,8 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
             foreach (var guid in allAssets)
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);
-                if (string.IsNullOrEmpty(path) || path.EndsWith(".meta"))
+                // Skip meta files and package paths (never touch Packages/)
+                if (string.IsNullOrEmpty(path) || path.EndsWith(".meta") || !path.StartsWith("Assets/"))
                     continue;
 
                 var deps = AssetDatabase.GetDependencies(path, false);
@@ -228,6 +242,10 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
 
             foreach (var dependent in dependents.OrderBy(p => p))
             {
+                // Guard: Skip package paths (never touch Packages/)
+                if (!dependent.StartsWith("Assets/"))
+                    continue;
+
                 if (!visited.Contains(dependent))
                 {
                     var depType = AssetDatabase.GetMainAssetTypeAtPath(dependent);
