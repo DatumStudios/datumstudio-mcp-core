@@ -97,7 +97,8 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
 
         private void DetectMissingInScenes(List<Dictionary<string, object>> missingScripts, List<Dictionary<string, object>> brokenReferences, TimeGuard timeGuard, ref bool timeLimitExceeded)
         {
-            var sceneGuids = AssetDatabase.FindAssets("t:Scene");
+            // Restrict to Assets folder to avoid scanning Packages/ (which causes "no meta file" errors)
+            var sceneGuids = AssetDatabase.FindAssets("t:Scene", new[] { "Assets" });
             int processedScenes = 0;
             const int maxScenesPerScan = 100; // Limit number of scenes processed
 
@@ -142,7 +143,8 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
 
         private void DetectMissingInPrefabs(List<Dictionary<string, object>> missingScripts, List<Dictionary<string, object>> brokenReferences, TimeGuard timeGuard, ref bool timeLimitExceeded)
         {
-            var prefabGuids = AssetDatabase.FindAssets("t:Prefab");
+            // Restrict to Assets folder to avoid scanning Packages/ (which causes "no meta file" errors)
+            var prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets" });
             int processedPrefabs = 0;
             const int maxPrefabsPerScan = 200; // Limit number of prefabs processed
 

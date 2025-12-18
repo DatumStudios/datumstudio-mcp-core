@@ -51,46 +51,48 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
 
             try
             {
-                // Count scenes
+                // Count scenes (restrict to Assets folder to avoid scanning Packages/)
                 timeGuard.Check();
-                var sceneGuids = AssetDatabase.FindAssets("t:Scene");
+                var sceneGuids = AssetDatabase.FindAssets("t:Scene", new[] { "Assets" });
                 counts["Scene"] = sceneGuids != null ? sceneGuids.Length : 0;
 
-                // Count prefabs
+                // Count prefabs (restrict to Assets folder to avoid scanning Packages/)
                 timeGuard.Check();
-                var prefabGuids = AssetDatabase.FindAssets("t:Prefab");
+                var prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets" });
                 counts["Prefab"] = prefabGuids != null ? prefabGuids.Length : 0;
 
                 // Count ScriptableObjects (best-effort: find all ScriptableObject-derived assets)
+                // Restrict to Assets folder to avoid scanning Packages/
                 timeGuard.Check();
-                var scriptableObjectGuids = AssetDatabase.FindAssets("t:ScriptableObject");
+                var scriptableObjectGuids = AssetDatabase.FindAssets("t:ScriptableObject", new[] { "Assets" });
                 counts["ScriptableObject"] = scriptableObjectGuids != null ? scriptableObjectGuids.Length : 0;
 
-                // Count materials
+                // Count materials (restrict to Assets folder to avoid scanning Packages/)
                 timeGuard.Check();
-                var materialGuids = AssetDatabase.FindAssets("t:Material");
+                var materialGuids = AssetDatabase.FindAssets("t:Material", new[] { "Assets" });
                 counts["Material"] = materialGuids != null ? materialGuids.Length : 0;
 
-                // Count textures (Texture2D, Texture3D, etc.)
+                // Count textures (Texture2D, Texture3D, etc.) (restrict to Assets folder to avoid scanning Packages/)
                 timeGuard.Check();
-                var textureGuids = AssetDatabase.FindAssets("t:Texture2D t:Texture3D t:Cubemap");
+                var textureGuids = AssetDatabase.FindAssets("t:Texture2D t:Texture3D t:Cubemap", new[] { "Assets" });
                 counts["Texture"] = textureGuids != null ? textureGuids.Length : 0;
 
-                // Count audio clips
+                // Count audio clips (restrict to Assets folder to avoid scanning Packages/)
                 timeGuard.Check();
-                var audioGuids = AssetDatabase.FindAssets("t:AudioClip");
+                var audioGuids = AssetDatabase.FindAssets("t:AudioClip", new[] { "Assets" });
                 counts["Audio"] = audioGuids != null ? audioGuids.Length : 0;
 
-                // Count animations
+                // Count animations (restrict to Assets folder to avoid scanning Packages/)
                 timeGuard.Check();
-                var animationGuids = AssetDatabase.FindAssets("t:AnimationClip");
+                var animationGuids = AssetDatabase.FindAssets("t:AnimationClip", new[] { "Assets" });
                 counts["Animation"] = animationGuids != null ? animationGuids.Length : 0;
 
                 // Count Timeline assets (best-effort: PlayableDirector assets)
+                // Restrict to Assets folder to avoid scanning Packages/
                 timeGuard.Check();
                 try
                 {
-                    var timelineGuids = AssetDatabase.FindAssets("t:PlayableAsset");
+                    var timelineGuids = AssetDatabase.FindAssets("t:PlayableAsset", new[] { "Assets" });
                     counts["Timeline"] = timelineGuids != null ? timelineGuids.Length : 0;
                 }
                 catch

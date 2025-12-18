@@ -63,10 +63,10 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
                 });
             }
 
-            // Optionally include all scenes in Assets
+            // Optionally include all scenes in Assets (restrict to Assets folder to avoid scanning Packages/)
             if (includeAllScenes)
             {
-                var allSceneGuids = AssetDatabase.FindAssets("t:Scene");
+                var allSceneGuids = AssetDatabase.FindAssets("t:Scene", new[] { "Assets" });
                 foreach (var guid in allSceneGuids)
                 {
                     var path = AssetDatabase.GUIDToAssetPath(guid);

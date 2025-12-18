@@ -36,7 +36,8 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
 
             try
             {
-                var mixerGuids = AssetDatabase.FindAssets("t:AudioMixer");
+                // Restrict to Assets folder to avoid scanning Packages/ (which causes "no meta file" errors)
+                var mixerGuids = AssetDatabase.FindAssets("t:AudioMixer", new[] { "Assets" });
                 
                 if (mixerGuids != null && mixerGuids.Length > 0)
                 {

@@ -23,8 +23,8 @@ namespace DatumStudio.Mcp.Core.Tests.Editor
         {
             _tool = new AudioMixerSnapshotReadTool();
             
-            // Try to find an existing AudioMixer in the project
-            var mixerGuids = AssetDatabase.FindAssets("t:AudioMixer");
+            // Try to find an existing AudioMixer in the project (restrict to Assets folder to avoid scanning Packages/)
+            var mixerGuids = AssetDatabase.FindAssets("t:AudioMixer", new[] { "Assets" });
             if (mixerGuids != null && mixerGuids.Length > 0)
             {
                 _testMixerPath = AssetDatabase.GUIDToAssetPath(mixerGuids[0]);
