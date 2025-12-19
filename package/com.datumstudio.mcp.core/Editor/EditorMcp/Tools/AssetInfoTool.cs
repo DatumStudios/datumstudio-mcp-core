@@ -120,7 +120,21 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
             var assetGuid = AssetDatabase.AssetPathToGUID(assetPath);
             var assetType = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
             var mainObject = AssetDatabase.LoadMainAssetAtPath(assetPath);
-            var dependencies = AssetDatabase.GetDependencies(assetPath, false);
+            var allDependencies = AssetDatabase.GetDependencies(assetPath, false);
+            
+            // Filter to only Assets/ dependencies (never touch Packages/)
+            int dependencyCount = 0;
+            if (allDependencies != null)
+            {
+                foreach (var dep in allDependencies)
+                {
+                    if (!string.IsNullOrEmpty(dep) && dep.StartsWith("Assets/") && !dep.EndsWith(".meta"))
+                    {
+                        dependencyCount++;
+                    }
+                }
+            }
+            
             var importer = AssetImporter.GetAtPath(assetPath);
 
             var output = new Dictionary<string, object>
@@ -129,7 +143,7 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
                 { "guid", assetGuid },
                 { "type", assetType != null ? assetType.Name : "Unknown" },
                 { "mainObjectName", mainObject != null ? mainObject.name : "" },
-                { "dependencyCount", dependencies != null ? dependencies.Length : 0 }
+                { "dependencyCount", dependencyCount }
             };
 
             if (importer != null)
