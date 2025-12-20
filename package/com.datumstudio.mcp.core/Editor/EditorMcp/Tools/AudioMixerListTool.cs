@@ -102,10 +102,11 @@ namespace DatumStudio.Mcp.Core.Editor.Tools
 
                     foreach (var group in sortedGroups)
                     {
+                        // AudioMixerGroup is a runtime object, not an asset, so it doesn't have a GUID
+                        // We can only provide the name
                         groups.Add(new Dictionary<string, object>
                         {
-                            { "name", group.name },
-                            { "guid", group.assetGUID }
+                            { "name", group.name }
                         });
                     }
                 }

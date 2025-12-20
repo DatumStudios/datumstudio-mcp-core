@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using UnityEditor;
 using UnityEngine;
+using DatumStudio.Mcp.Core.Editor.Schemas;
 using DatumStudio.Mcp.Core.Editor.Server;
 
 namespace DatumStudio.Mcp.Core.Editor.Transport
