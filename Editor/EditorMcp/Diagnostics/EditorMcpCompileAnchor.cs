@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEditor;
 
 namespace DatumStudio.Mcp.Core.Editor.Diagnostics
 {
@@ -23,6 +24,21 @@ namespace DatumStudio.Mcp.Core.Editor.Diagnostics
         /// Assembly name that should be produced by this package.
         /// </summary>
         public const string AssemblyName = "DatumStudio.Mcp.Core.Editor";
+
+        /// <summary>
+        /// Logs once per Unity session that this assembly has loaded.
+        /// This proves the assembly compiled and was loaded by Unity.
+        /// </summary>
+        [InitializeOnLoadMethod]
+        private static void OnLoad()
+        {
+            const string SessionKey = "DatumStudio.Mcp.Core.Editor.Loaded";
+            if (!SessionState.GetBool(SessionKey, false))
+            {
+                SessionState.SetBool(SessionKey, true);
+                Debug.Log("DatumStudio.Mcp.Core.Editor loaded");
+            }
+        }
 
         /// <summary>
         /// Logs a diagnostic message (only if verbose logging is enabled).
