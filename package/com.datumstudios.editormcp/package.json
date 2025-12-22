@@ -1,0 +1,30 @@
+{
+  "name": "com.datumstudios.editormcp",
+  "version": "0.1.2",
+  "displayName": "EditorMCP",
+  "description": "Editor-first deterministic tooling foundation",
+  "documentationUrl": "https://github.com/DatumStudios/EditorMCP/blob/main/docs/Index.md",
+  "changelogUrl": "https://github.com/DatumStudios/EditorMCP/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/DatumStudios/EditorMCP/blob/main/LICENSE",
+  "keywords": [
+    "mcp",
+    "core",
+    "editor",
+    "tooling",
+    "datumstudio"
+  ],
+  "author": {
+    "name": "DatumStudios",
+    "email": "",
+    "url": "https://github.com/DatumStudios"
+  },
+  "dependencies": {},
+  "samples": [
+    {
+      "displayName": "Minimal Demo",
+      "description": "Lightweight demo scene",
+      "path": "Samples~/MinimalDemo"
+    }
+  ]
+}
+
