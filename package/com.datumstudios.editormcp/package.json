@@ -3,7 +3,6 @@
   "displayName": "EditorMCP",
   "version": "1.0.0",
   "unity": "2022.3",
-  "unityRelease": "2022.3.20f1",
   "description": "150+ MCP tools for Cursor/Claude in Unity Editor",
   "documentationUrl": "https://github.com/DatumStudios/EditorMCP/blob/main/docs/Index.md",
   "changelogUrl": "https://github.com/DatumStudios/EditorMCP/blob/main/CHANGELOG.md",
