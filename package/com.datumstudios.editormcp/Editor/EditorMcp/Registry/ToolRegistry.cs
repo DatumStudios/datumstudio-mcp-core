@@ -58,16 +58,16 @@ namespace DatumStudios.EditorMCP.Registry
         /// Called automatically on Editor startup via [InitializeOnLoadMethod].
         /// </summary>
         [InitializeOnLoadMethod]
-        private static void DiscoverAttributeTools()
+        private static void InitializeAttributeDiscovery()
         {
             if (_attributeDiscoveryPerformed)
             {
                 return;
             }
 
-            // Note: This is a static method, so we can't access instance members directly.
-            // The actual discovery will be performed when a ToolRegistry instance is created
-            // or when DiscoverAttributeTools() is called on an instance.
+            // Trigger discovery via instance method
+            var instance = Instance;
+            instance.DiscoverAttributeTools();
             _attributeDiscoveryPerformed = true;
         }
 

@@ -128,7 +128,7 @@ namespace DatumStudios.EditorMCP.Tools
             };
         }
 
-        private List<AudioMixerSnapshot> GetAllSnapshots(AudioMixer mixer)
+        private static List<AudioMixerSnapshot> GetAllSnapshots(AudioMixer mixer)
         {
             var snapshots = new List<AudioMixerSnapshot>();
 
