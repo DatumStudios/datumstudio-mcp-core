@@ -56,10 +56,10 @@ namespace DatumStudios.EditorMCP.Diagnostics
             var compatibilityText = isCompatible ? "Compatible ✓" : $"Incompatible ✗ (Requires {VersionValidator.GetMinimumVersion()}+)";
             var compatibilityColor = isCompatible ? Color.green : Color.red;
             
-            var originalColor = GUI.color;
+            var originalColor1 = GUI.color;
             GUI.color = compatibilityColor;
             EditorGUILayout.LabelField("Unity Version:", $"{Application.unityVersion} - {compatibilityText}");
-            GUI.color = originalColor;
+            GUI.color = originalColor1;
             
             if (!isCompatible)
             {
@@ -73,10 +73,10 @@ namespace DatumStudios.EditorMCP.Diagnostics
             var statusText = _server.IsRunning ? "Running" : "Stopped";
             var statusColor = _server.IsRunning ? Color.green : Color.gray;
             
-            var originalColor = GUI.color;
+            var originalColor2 = GUI.color;
             GUI.color = statusColor;
             EditorGUILayout.LabelField("Status:", statusText);
-            GUI.color = originalColor;
+            GUI.color = originalColor2;
 
             // Transport info
             if (_server.IsRunning && _server.TransportHost != null)

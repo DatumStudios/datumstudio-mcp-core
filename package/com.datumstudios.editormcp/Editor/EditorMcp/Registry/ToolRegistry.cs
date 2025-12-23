@@ -404,13 +404,9 @@ namespace DatumStudios.EditorMCP.Registry
                     var response = new ToolInvokeResponse
                     {
                         Tool = toolId,
-                        Content = new List<ToolInvokeResponseContent>
+                        Output = new Dictionary<string, object>
                         {
-                            new ToolInvokeResponseContent
-                            {
-                                Type = "text",
-                                Text = jsonResult
-                            }
+                            { "result", jsonResult }
                         }
                     };
 

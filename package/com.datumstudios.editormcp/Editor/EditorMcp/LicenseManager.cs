@@ -45,7 +45,29 @@ namespace DatumStudios.EditorMCP
 
                 if (_isLicensed == null)
                 {
-                    _isLicensed = AssetStoreUtils.HasLicenseForPackage(PACKAGE_ID);
+                    // Use reflection to access AssetStoreUtils (internal API in Unity)
+                    // This gracefully handles cases where the API is not accessible
+                    try
+                    {
+                        var assetStoreUtilsType = typeof(UnityEditor.AssetStoreUtils);
+                        var hasLicenseMethod = assetStoreUtilsType.GetMethod("HasLicenseForPackage", 
+                            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                        
+                        if (hasLicenseMethod != null)
+                        {
+                            _isLicensed = (bool)hasLicenseMethod.Invoke(null, new object[] { PACKAGE_ID });
+                        }
+                        else
+                        {
+                            // API not available - default to unlicensed (Core tier)
+                            _isLicensed = false;
+                        }
+                    }
+                    catch
+                    {
+                        // API not accessible - default to unlicensed (Core tier)
+                        _isLicensed = false;
+                    }
                 }
                 return _isLicensed.Value;
             }

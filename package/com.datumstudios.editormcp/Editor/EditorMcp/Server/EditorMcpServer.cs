@@ -74,11 +74,10 @@ namespace DatumStudios.EditorMCP.Server
                 throw new InvalidOperationException(errorMessage);
             }
 
-            // Discover attribute-based tools first (automatic discovery)
+            // Discover attribute-based tools (automatic discovery)
             _toolRegistry.DiscoverAttributeTools();
 
-            // Register legacy interface-based core tools (for backward compatibility during migration)
-            RegisterCoreTools();
+            // Note: Legacy CoreToolBootstrapper is no longer used - all tools are now attribute-based
 
             // Create and start transport host
             _transportHost = new TransportHost(_toolRegistry, _serverVersion);
@@ -124,13 +123,7 @@ namespace DatumStudios.EditorMCP.Server
             };
         }
 
-        /// <summary>
-        /// Registers all core tools for v0.1.
-        /// </summary>
-        private void RegisterCoreTools()
-        {
-            CoreToolBootstrapper.RegisterCoreTools(_toolRegistry, _serverVersion);
-        }
+        // Note: RegisterCoreTools() removed - all tools are now discovered via [McpTool] attributes
 
         /// <summary>
         /// Gets the list of enabled tool categories.

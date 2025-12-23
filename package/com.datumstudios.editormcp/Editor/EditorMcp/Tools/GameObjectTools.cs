@@ -55,9 +55,9 @@ namespace DatumStudios.EditorMCP.Tools
                         hierarchyPath = (string)hierarchyPathObj;
                     }
 
-                    if (paramsObj.TryGetValue("componentType", out var componentTypeObj) && componentTypeObj is string)
+                    if (paramsObj.TryGetValue("componentType", out var componentTypeParam) && componentTypeParam is string)
                     {
-                        componentType = (string)componentTypeObj;
+                        componentType = (string)componentTypeParam;
                     }
 
                     if (paramsObj.TryGetValue("tag", out var tagObj) && tagObj is string)
