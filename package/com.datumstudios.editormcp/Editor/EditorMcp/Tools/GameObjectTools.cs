@@ -24,17 +24,17 @@ namespace DatumStudios.EditorMCP.Tools
         /// <param name="jsonParams">JSON parameters with optional "hierarchyPath", "componentType", "tag", "layer", "namePattern", "maxResults".</param>
         /// <returns>JSON string with matching GameObjects.</returns>
         [McpTool("go.find", "Finds GameObjects in the active scene matching specified criteria (hierarchy path pattern, component type, tag, layer). Essential discovery tool that enables 90% of Cursor queries starting with \"find objects\".", Tier.Core)]
-        public static string FindGameObjects(string jsonParams)
+        public static Dictionary<string, object> FindGameObjects(string jsonParams)
         {
             // Check for active scene
             var scene = EditorSceneManager.GetActiveScene();
             if (!scene.isLoaded)
             {
-                return UnityEngine.JsonUtility.ToJson(new Dictionary<string, object>
+                return new Dictionary<string, object>
                 {
                     { "success", false },
                     { "error", "No active scene loaded" }
-                });
+                };
             }
 
             // Parse JSON parameters
@@ -76,59 +76,9 @@ namespace DatumStudios.EditorMCP.Tools
                             layer = (int)(long)layerObj;
                         }
                     }
-
-                    if (paramsObj.TryGetValue("namePattern", out var namePatternObj) && namePatternObj is string)
-                    {
-                        namePattern = (string)namePatternObj;
-                    }
-
-                    if (paramsObj.TryGetValue("maxResults", out var maxResultsObj))
-                    {
-                        if (maxResultsObj is int)
-                        {
-                            maxResults = (int)maxResultsObj;
-                        }
-                        else if (maxResultsObj is long)
-                        {
-                            maxResults = (int)(long)maxResultsObj;
-                        }
                     }
                 }
-            }
-
-            // Get all GameObjects in the scene
-            var allObjects = HierarchyResolver.GetAllGameObjects(scene, includeInactive: false).ToList();
-            var matches = new List<Dictionary<string, object>>();
-
-            // Convert glob pattern to regex if hierarchyPath is provided
-            Regex hierarchyRegex = null;
-            if (!string.IsNullOrEmpty(hierarchyPath))
-            {
-                try
-                {
-                    var regexPattern = ConvertGlobToRegex(hierarchyPath);
-                    hierarchyRegex = new Regex(regexPattern, RegexOptions.Compiled);
-                }
-                catch
-                {
-                    return UnityEngine.JsonUtility.ToJson(new Dictionary<string, object>
-                    {
-                        { "success", false },
-                        { "error", "Invalid hierarchy path pattern" }
-                    });
-                }
-            }
-
-            // Resolve component type if specified
-            Type componentTypeObj = null;
-            if (!string.IsNullOrEmpty(componentType))
-            {
-                componentTypeObj = ResolveComponentType(componentType);
-                if (componentTypeObj == null)
-                {
-                    // Component type not found, but don't fail - just skip component filter
-                }
-            }
+}
 
             // Filter GameObjects
             foreach (var obj in allObjects)
@@ -190,11 +140,11 @@ namespace DatumStudios.EditorMCP.Tools
                     { "components", componentNames.ToArray() },
                     { "tag", obj.tag },
                     { "layer", obj.layer }
-                });
+                };
             }
 
             // Sort by hierarchy path for deterministic output
-            matches = matches.OrderBy(m => m["hierarchyPath"] as string).ToList();
+            matches = matches.OrderBy(m => (string)m["hierarchyPath"]).ToList();
 
             var result = new Dictionary<string, object>
             {
@@ -202,296 +152,17 @@ namespace DatumStudios.EditorMCP.Tools
                 { "activeScene", scene.path }
             };
 
-            return UnityEngine.JsonUtility.ToJson(result);
+            return result;
+        }
         }
 
-        /// <summary>
-        /// Changes the parent of a GameObject in the active scene.
-        /// Enables basic hierarchy management for single-object operations.
-        /// </summary>
-        /// <param name="jsonParams">JSON parameters with "childPath" (required) and optional "parentPath".</param>
-        /// <returns>JSON string with operation result.</returns>
-        [McpTool("go.setParent", "Changes the parent of a GameObject in the active scene. Enables basic hierarchy management for single-object operations.", Tier.Core)]
-        public static string SetParent(string jsonParams)
-        {
-            // Check for active scene
-            var scene = EditorSceneManager.GetActiveScene();
-            if (!scene.isLoaded)
-            {
-                return UnityEngine.JsonUtility.ToJson(new Dictionary<string, object>
-                {
-                    { "success", false },
-                    { "error", "No active scene loaded" }
-                });
-            }
-
-            // Parse JSON parameters
-            string childPath = null;
-            string parentPath = null;
-
-            if (!string.IsNullOrEmpty(jsonParams) && jsonParams != "{}")
-            {
-                var paramsObj = UnityEngine.JsonUtility.FromJson<Dictionary<string, object>>(jsonParams);
-                if (paramsObj != null)
-                {
-                    if (paramsObj.TryGetValue("childPath", out var childPathObj) && childPathObj is string)
-                    {
-                        childPath = (string)childPathObj;
-                    }
-
-                    if (paramsObj.TryGetValue("parentPath", out var parentPathObj) && parentPathObj is string)
-                    {
-                        parentPath = (string)parentPathObj;
-                    }
-                }
-            }
-
-            if (string.IsNullOrEmpty(childPath))
-            {
-                return UnityEngine.JsonUtility.ToJson(new Dictionary<string, object>
-                {
-                    { "success", false },
-                    { "error", "childPath is required" }
-                });
-            }
-
-            // Find child GameObject
-            var child = HierarchyResolver.FindByPath(childPath);
-            if (child == null)
-            {
-                return UnityEngine.JsonUtility.ToJson(new Dictionary<string, object>
-                {
-                    { "success", false },
-                    { "error", "Child GameObject not found" }
-                });
-            }
-
-            // Find parent GameObject (if specified)
-            Transform newParent = null;
-            string newParentPath = null;
-            if (!string.IsNullOrEmpty(parentPath))
-            {
-                var parentObj = HierarchyResolver.FindByPath(parentPath);
-                if (parentObj == null)
-                {
-                    return UnityEngine.JsonUtility.ToJson(new Dictionary<string, object>
-                    {
-                        { "success", false },
-                        { "error", "Parent GameObject not found" }
-                    });
-                }
-
-                // Check for circular hierarchy
-                if (IsCircularHierarchy(child.transform, parentObj.transform))
-                {
-                    return UnityEngine.JsonUtility.ToJson(new Dictionary<string, object>
-                    {
-                        { "success", false },
-                        { "error", "Cannot set parent to descendant" }
-                    });
-                }
-
-                newParent = parentObj.transform;
-                newParentPath = parentPath;
-            }
-            else
-            {
-                // Reparent to scene root
-                newParentPath = "";
-            }
-
-            // Perform reparenting with undo support
-            using (var undo = new UndoScope("go.setParent"))
-            {
-                Undo.SetTransformParent(child.transform, newParent, "EditorMCP: Set Parent");
-            }
-
-            var newHierarchyPath = newParent != null 
-                ? HierarchyResolver.FullHierarchyPath(child.transform)
-                : child.name;
-
-            var result = new Dictionary<string, object>
-            {
-                { "success", true },
-                { "childPath", childPath },
-                { "newParentPath", newParentPath },
-                { "newHierarchyPath", newHierarchyPath }
-            };
-
-            return UnityEngine.JsonUtility.ToJson(result);
-        }
-
-        /// <summary>
-        /// Returns all components attached to a GameObject in the active scene, including component types and property counts.
-        /// Perfect complement to go.find for "What components on this?" queries.
-        /// </summary>
-        /// <param name="jsonParams">JSON parameters with "hierarchyPath" (required) and optional "includeProperties" boolean.</param>
-        /// <returns>JSON string with components list.</returns>
-        [McpTool("component.list", "Returns all components attached to a GameObject in the active scene, including component types and property counts. Perfect complement to go.find for \"What components on this?\" queries.", Tier.Core)]
-        public static string ListComponents(string jsonParams)
-        {
-            // Check for active scene
-            var scene = EditorSceneManager.GetActiveScene();
-            if (!scene.isLoaded)
-            {
-                return UnityEngine.JsonUtility.ToJson(new Dictionary<string, object>
-                {
-                    { "success", false },
-                    { "error", "No active scene loaded" }
-                });
-            }
-
-            // Parse JSON parameters
-            string hierarchyPath = null;
-            bool includeProperties = false;
-
-            if (!string.IsNullOrEmpty(jsonParams) && jsonParams != "{}")
-            {
-                var paramsObj = UnityEngine.JsonUtility.FromJson<Dictionary<string, object>>(jsonParams);
-                if (paramsObj != null)
-                {
-                    if (paramsObj.TryGetValue("hierarchyPath", out var hierarchyPathObj) && hierarchyPathObj is string)
-                    {
-                        hierarchyPath = (string)hierarchyPathObj;
-                    }
-
-                    if (paramsObj.TryGetValue("includeProperties", out var includePropertiesObj))
-                    {
-                        if (includePropertiesObj is bool)
-                        {
-                            includeProperties = (bool)includePropertiesObj;
-                        }
-                    }
-                }
-            }
-
-            if (string.IsNullOrEmpty(hierarchyPath))
-            {
-                return UnityEngine.JsonUtility.ToJson(new Dictionary<string, object>
-                {
-                    { "success", false },
-                    { "error", "hierarchyPath is required" }
-                });
-            }
-
-            // Find GameObject
-            var gameObject = HierarchyResolver.FindByPath(hierarchyPath);
-            if (gameObject == null)
-            {
-                return UnityEngine.JsonUtility.ToJson(new Dictionary<string, object>
-                {
-                    { "success", false },
-                    { "error", $"GameObject with path '{hierarchyPath}' not found" }
-                });
-            }
-
-            // Get all components
-            var components = new List<Dictionary<string, object>>();
-            var allComponents = gameObject.GetComponents<Component>();
-
-            foreach (var component in allComponents)
-            {
-                if (component == null)
-                {
-                    components.Add(new Dictionary<string, object>
-                    {
-                        { "type", "Missing Script" },
-                        { "instanceId", 0 },
-                        { "propertyCount", 0 }
-                    });
-                    continue;
-                }
-
-                var componentData = new Dictionary<string, object>
-                {
-                    { "type", component.GetType().FullName },
-                    { "instanceId", component.GetInstanceID() }
-                };
-
-                // Get property count
-                int propertyCount = 0;
-                if (includeProperties)
-                {
-                    var serializedFields = new List<Dictionary<string, object>>();
-                    try
-                    {
-                        var serializedObject = new SerializedObject(component);
-                        var iterator = serializedObject.GetIterator();
-                        iterator.Next(true); // Skip script reference
-
-                        int count = 0;
-                        while (iterator.NextVisible(false) && count < 50) // Limit to 50 properties
-                        {
-                            var fieldData = new Dictionary<string, object>
-                            {
-                                { "name", iterator.name },
-                                { "type", iterator.type }
-                            };
-
-                            // Get value (simplified - just store as string representation for now)
-                            try
-                            {
-                                fieldData["value"] = GetSerializedPropertyValue(iterator);
-                            }
-                            catch
-                            {
-                                fieldData["value"] = null;
-                            }
-
-                            serializedFields.Add(fieldData);
-                            propertyCount++;
-                            count++;
-                        }
-                    }
-                    catch
-                    {
-                        // If serialization fails, just count properties
-                    }
-
-                    componentData["serializedFields"] = serializedFields.ToArray();
-                }
-                else
-                {
-                    // Just count properties without serializing
-                    try
-                    {
-                        var serializedObject = new SerializedObject(component);
-                        var iterator = serializedObject.GetIterator();
-                        iterator.Next(true); // Skip script reference
-                        while (iterator.NextVisible(false))
-                        {
-                            propertyCount++;
-                        }
-                    }
-                    catch
-                    {
-                        propertyCount = 0;
-                    }
-                }
-
-                componentData["propertyCount"] = propertyCount;
-                components.Add(componentData);
-            }
-
-            var result = new Dictionary<string, object>
-            {
-                { "success", true },
-                { "hierarchyPath", hierarchyPath },
-                { "components", components.ToArray() },
-                { "activeScene", scene.path }
-            };
-
-            return UnityEngine.JsonUtility.ToJson(result);
-        }
-
-        #region Helper Methods
+        #endregion Helper Methods
 
         /// <summary>
         /// Converts a glob pattern to a regex pattern for hierarchy path matching.
         /// </summary>
         private static string ConvertGlobToRegex(string glob)
         {
-            // Escape special regex characters first
             var escaped = Regex.Escape(glob);
             
             // Replace escaped ** with recursive pattern (.*?)
@@ -567,25 +238,25 @@ namespace DatumStudios.EditorMCP.Tools
             switch (property.propertyType)
             {
                 case SerializedPropertyType.Integer:
-                    return property.intValue;
+                    return property.intValue; break;
                 case SerializedPropertyType.Boolean:
-                    return property.boolValue;
+                    return property.boolValue; break;
                 case SerializedPropertyType.Float:
-                    return property.floatValue;
+                    return property.floatValue; break;
                 case SerializedPropertyType.String:
-                    return property.stringValue;
+                    return property.stringValue; break;
                 case SerializedPropertyType.Vector2:
-                    return new { x = property.vector2Value.x, y = property.vector2Value.y };
+                    return new { x = property.vector2Value.x, y = property.vector2Value.y }; break;
                 case SerializedPropertyType.Vector3:
-                    return new { x = property.vector3Value.x, y = property.vector3Value.y, z = property.vector3Value.z };
+                    return new { x = property.vector3Value.x, y = property.vector3Value.y, z = property.vector3Value.z }; break;
                 case SerializedPropertyType.Vector4:
-                    return new { x = property.vector4Value.x, y = property.vector4Value.y, z = property.vector4Value.z, w = property.vector4Value.w };
+                    return new { x = property.vector4Value.x, y = property.vector4Value.y, z = property.vector4Value.z, w = property.vector4Value.w }; break;
                 case SerializedPropertyType.Quaternion:
-                    return new { x = property.quaternionValue.x, y = property.quaternionValue.y, z = property.quaternionValue.z, w = property.quaternionValue.w };
+                    return new { x = property.quaternionValue.x, y = property.quaternionValue.y, z = property.quaternionValue.z, w = property.quaternionValue.w }; break;
                 case SerializedPropertyType.Color:
-                    return new { r = property.colorValue.r, g = property.colorValue.g, b = property.colorValue.b, a = property.colorValue.a };
+                    return new { r = property.colorValue.r, g = property.colorValue.g, b = property.colorValue.b, a = property.colorValue.a }; break;
                 case SerializedPropertyType.ObjectReference:
-                    return property.objectReferenceValue != null ? property.objectReferenceValue.name : null;
+                    return property.objectReferenceValue != null ? property.objectReferenceValue.name : null; break;
                 default:
                     return property.stringValue; // Fallback to string representation
             }
@@ -593,5 +264,4 @@ namespace DatumStudios.EditorMCP.Tools
 
         #endregion
     }
-}
 
