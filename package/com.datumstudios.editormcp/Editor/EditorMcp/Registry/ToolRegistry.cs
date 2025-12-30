@@ -87,11 +87,10 @@ namespace DatumStudios.EditorMCP.Registry
 
             foreach (var type in types)
             {
-                    var categoryAttr = type.GetCustomAttribute<McpToolCategoryAttribute>();
-                    var category = categoryAttr?.Category ?? ExtractCategoryFromNamespace(type);
+                var categoryAttr = type.GetCustomAttribute<McpToolCategoryAttribute>();
+                var category = categoryAttr?.Category ?? ExtractCategoryFromNamespace(type);
 
-                    var methods = type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-                    Debug.Log($"[EditorMCP] Scanning type: {type.FullName}, methods found: {methods.Length}");
+                var methods = type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
                 foreach (var method in methods)
                 {
                     var attr = method.GetCustomAttribute<McpToolAttribute>();
@@ -125,10 +124,6 @@ namespace DatumStudios.EditorMCP.Registry
                             Debug.LogWarning($"[EditorMCP] Tool '{attr.Id}' has invalid return type. Expected: object or Dictionary<string, object>");
                             continue;
                         }
-
-                        // Debug: Check tier validation
-                        bool hasTierAccess = LicenseManager.HasTier(attr.MinTier);
-                        Debug.Log($"[EditorMCP] Tool '{attr.Id}' tier check: required={attr.MinTier}, hasAccess={hasTierAccess}");
 
                         var toolInfo = new AttributeToolInfo
                         {
