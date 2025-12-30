@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEngine;
 using DatumStudios.EditorMCP.Registry;
 
 namespace DatumStudios.EditorMCP
