@@ -32,7 +32,8 @@ namespace DatumStudios.EditorMCP
                     EditorPrefs.SetBool("EditorMCP.DeveloperOverride", true);
                     return true;
                 }
-                Debug.Log($"[EditorMCP] Developer override check: productName='{Application.productName}', overrideValue={overrideValue}, returning={overrideValue || Application.productName.Contains(\"EditorMCP_TestHarness\")}");
+                bool containsTestHarness = Application.productName.Contains("EditorMCP_TestHarness");
+                Debug.Log($"[EditorMCP] Developer override check: productName='{Application.productName}', overrideValue={overrideValue}, returning={overrideValue || containsTestHarness}");
                 return overrideValue || Application.productName.Contains("EditorMCP_TestHarness");
 #endif
             }
