@@ -17,6 +17,8 @@ namespace DatumStudios.EditorMCP.Diagnostics
     {
         private static EditorMcpServer _server;
         private Vector2 _scrollPosition;
+        private double _lastRefreshTime;
+        private readonly float _refreshInterval = 1.0f; // Refresh every second
 
         /// <summary>
         /// Opens the EditorMCP Status window.
@@ -35,6 +37,12 @@ namespace DatumStudios.EditorMCP.Diagnostics
             {
                 _server = new EditorMcpServer();
             }
+            
+            // Subscribe to tool discovery events
+            ToolRegistry.OnToolsDiscovered += OnToolsDiscovered;
+            
+            // Log domain reload event
+            Debug.Log($"[EditorMCP] Domain reload detected - Status Window enabled");
         }
 
         private void OnGUI()
@@ -141,7 +149,6 @@ namespace DatumStudios.EditorMCP.Diagnostics
             if (_server.IsRunning)
             {
                 var toolCount = _server.ToolRegistry.Count;
-                Debug.Log($"[EditorMCP] Status Window refresh: server instance {_server?.GetHashCode() ?? 0}, registry count {toolCount}");
                 EditorGUILayout.LabelField("Registered Tools:", toolCount.ToString());
                 
                 // Enhanced tool breakdown by category and tier
@@ -322,6 +329,17 @@ namespace DatumStudios.EditorMCP.Diagnostics
                 Debug.LogError($"Failed to copy tool list: {ex.Message}");
                 EditorUtility.DisplayDialog("Error", $"Failed to copy tool list: {ex.Message}", "OK");
             }
+        }
+
+        private void OnDisable()
+        {
+            // Unsubscribe from tool discovery events
+            ToolRegistry.OnToolsDiscovered -= OnToolsDiscovered;
+        }
+        
+        private void OnToolsDiscovered(int toolCount)
+        {
+            Debug.Log($"[EditorMCP] Status Window: Tool registry populated with {toolCount} tools");
         }
 
         private string EscapeJson(string value)

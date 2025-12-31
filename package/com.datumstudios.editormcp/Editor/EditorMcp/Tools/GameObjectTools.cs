@@ -106,7 +106,7 @@ namespace DatumStudios.EditorMCP.Tools
         // MCP Tools
         // ----------------------------
 
-        [McpTool("go.find", "Find GameObjects in the active scene (or a named scene) by substring or regex.")]
+        [McpTool("go.find", "Find GameObjects in the active scene (or a named scene) by substring or regex.", Tier.Core)]
         public static Dictionary<string, object> FindGameObjects(string jsonParams)
         {
             var req = SafeFromJson<FindRequest>(jsonParams) ?? new FindRequest();
@@ -171,7 +171,7 @@ namespace DatumStudios.EditorMCP.Tools
             };
         }
 
-        [McpTool("go.setParent", "Reparent a GameObject under another GameObject (or to root).")]
+        [McpTool("go.setParent", "Reparent a GameObject under another GameObject (or to root).", Tier.Core)]
         public static Dictionary<string, object> SetParent(string jsonParams)
         {
             var req = SafeFromJson<SetParentRequest>(jsonParams);
@@ -260,7 +260,7 @@ namespace DatumStudios.EditorMCP.Tools
             }
         }
 
-        [McpTool("component.list", "List components attached to a GameObject (basic info).")]
+        [McpTool("component.list", "List components attached to a GameObject (basic info).", Tier.Core)]
         public static Dictionary<string, object> ListComponents(string jsonParams)
         {
             var req = SafeFromJson<ComponentListRequest>(jsonParams);

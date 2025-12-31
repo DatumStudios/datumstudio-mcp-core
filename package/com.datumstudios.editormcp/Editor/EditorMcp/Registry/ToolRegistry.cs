@@ -31,6 +31,11 @@ namespace DatumStudios.EditorMCP.Registry
         private readonly Dictionary<string, AttributeToolInfo> _attributeTools = new Dictionary<string, AttributeToolInfo>();
         private static bool _attributeDiscoveryPerformed = false;
         private static ToolRegistry _current;
+        
+        /// <summary>
+        /// Event fired when tools are discovered or rediscovered.
+        /// </summary>
+        public static event Action<int> OnToolsDiscovered;
 
         /// <summary>
         /// Gets or sets the current ToolRegistry instance (for static tool access).
@@ -117,6 +122,10 @@ namespace DatumStudios.EditorMCP.Registry
                             continue;
                         }
 
+                        // Debug: Show tier validation status
+                        bool hasTierAccess = LicenseManager.HasTier(attr.MinTier);
+                        Debug.Log($"[EditorMCP] Tool '{attr.Id}' tier check: required={attr.MinTier}, hasAccess={hasTierAccess}");
+
                         var parameters = method.GetParameters();
                         if (parameters.Length != 1 || parameters[0].ParameterType != typeof(string))
                         {
@@ -131,17 +140,21 @@ namespace DatumStudios.EditorMCP.Registry
                             continue;
                         }
 
+                        // Debug: Show tool validation success
+                        Debug.Log($"[EditorMCP] Tool '{attr.Id}' validation: ✅ PASSED");
+
                         var toolInfo = new AttributeToolInfo
                         {
                             Id = attr.Id,
-                            Description = attr.Description,
-                            MinTier = attr.MinTier,
                             Method = method,
-                            Category = category
+                            Category = category,
+                            MinTier = attr.MinTier,
+                            Description = attr.Description
                         };
 
                         _attributeTools[attr.Id] = toolInfo;
                         discoveredCount++;
+                        Debug.Log($"[EditorMCP] Tool '{attr.Id}' successfully registered (total: {discoveredCount})");
                         discoveredTools.Add($"{type.Name}.{method.Name} (ID: {attr.Id})");
                 }
             }
@@ -166,6 +179,9 @@ namespace DatumStudios.EditorMCP.Registry
             }
 
             UnityEngine.Debug.Log($"[EditorMCP] ====================================");
+            
+            // Fire event for Status Window and other subscribers
+            OnToolsDiscovered?.Invoke(discoveredCount);
         }
 
         /// <summary>

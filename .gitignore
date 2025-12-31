@@ -1,4 +1,61 @@
 # Unity generated files
+
+# Unity cache files (automatically generated, can be excluded)
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+
+# Unity build outputs (can be excluded)
+[Bb]uild/
+[Dd]ata/
+
+# Unity platform-specific files
+[Uu]serS/
+
+# OS generated files
+[Ss]ystem/
+
+# Package cache (can be excluded)
+[Pp]ackages/
+[Pp]ackage-cache/
+
+# Editor-only files (important!)
+[Ee]ditor/
+
+# Version control files
+*.cs
+*.asmdef
+*.meta
+*.git
+*.gitignore
+*.sln
+
+# Logs and documentation
+*.md
+*.txt
+*.log
+
+# Test files
+*.json
+*.xml
+
+# IDE and editor files
+*.vs
+*.suo
+*.user
+
+# Build system files
+*.cache
+*.tmp
+*.pdb
+*.exe
+*.dll
+
+# Scripts
+*.ps1
+*.ps1xml
+*.bat
+*.cmd
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -22,6 +79,47 @@
 *.mdb.meta
 
 # Unity3D generated file on crash reports
+- [Ll]ibrary/
+- [Tt]emp/
+- [Oo]bj/
+- [Bb]uild/
+- [Bb]uilds/
+- [Ll]ogs/
+- [Uu]serSs]ettings/
+- [Pp]ackages/
+- [Pp]ackage-cache/
+- [Pp]ackages-lock.json
+- [Dd]ata/
+- [Tt]emp/
+- [Oo]bj/
+- [Bb]uild/
+- [Bb]uilds/
+- [Ll]ogs/
+- [Uu]serSs]ettings/
+- [Pp]ackages/
+- [Pp]ackage-cache/
+- [Pp]ackages-lock.json
+- [Dd]ata/
+- [Tt]emp/
+- [Oo]bj/
+- [Bb]uild/
+- [Bb]uilds/
+- [Ll]ogs/
+- [Uu]serSs]ettings/
+- [Pp]ackages/
+- [Pp]ackage-cache/
+- [Pp]ackages-lock.json
+- [Dd]ata/
+- [Tt]emp/
+- [Oo]bj/
+- [Bb]uild/
+- [Bb]uilds/
+- [Ll]ogs/
+- [Uu]serSs]ettings/
+- [Pp]ackages/
+- [Pp]ackage-cache/
+- [Pp]ackages-lock.json
+- [Dd]ata/
 sysinfo.txt
 
 # Builds
