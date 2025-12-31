@@ -89,7 +89,7 @@ namespace DatumStudios.EditorMCP.Registry
             int skippedCount = 0;
             var skippedTools = new List<string>();
             var discoveredTools = new List<string>();
-            var expectedCoreTools = 20;
+            var expectedCoreTools = 19;
 
             foreach (var type in types)
             {
