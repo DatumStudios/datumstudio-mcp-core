@@ -1,0 +1,42 @@
+# --- Unity / C# / Docs line endings policy ---
+# Default: normalize text to LF in repo
+* text=auto eol=lf
+
+# Windows scripts stay CRLF (optional but recommended for .bat/.cmd)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# PowerShell: keep LF (pwsh is fine with LF; avoids churn)
+*.ps1 text eol=lf
+*.psm1 text eol=lf
+*.psd1 text eol=lf
+
+# C# / Unity / configs
+*.cs text eol=lf
+*.asmdef text eol=lf
+*.asmref text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.uss text eol=lf
+*.uxml text eol=lf
+*.shader text eol=lf
+*.cginc text eol=lf
+*.hlsl text eol=lf
+
+# Unity meta: treat as text (safe), keep LF in repo
+*.meta text eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.zip binary
+*.7z binary
+*.dll binary
+*.exe binary
+*.pdf binary
